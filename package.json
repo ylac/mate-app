@@ -9,7 +9,9 @@
   "dependencies": {
     "native-base": "^2.0.12",
     "react": "~15.4.1",
-    "react-native": "0.42.0"
+    "react-native": "0.42.0",
+    "react-native-contacts-wrapper": "^0.2.3",
+    "react-native-select-contact-android": "^0.7.1"
   },
   "devDependencies": {
     "babel-jest": "19.0.0",

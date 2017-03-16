@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
   AppRegistry,
+  Button,
   ListView,
   StyleSheet,
   Text,
@@ -8,6 +9,7 @@ import {
   View
 } from 'react-native';
 import { Body, CheckBox, Container, Content, Item, Input, Icon, ListItem } from 'native-base';
+import AddBuddyButton from './AddBuddyButton';
 
 
 export default class MateApp extends Component {
@@ -41,7 +43,12 @@ export default class MateApp extends Component {
         />
         <ListView
           dataSource={this.state.dataSource}
-          renderRow={(rowData) => <Text>{rowData}</Text> }
+          renderRow={(rowData) =>
+            <View style={styles.row}>
+              <Text>{rowData}</Text>
+              <AddBuddyButton/>
+            </View>
+          }
           style={styles.listView}
         />
       </View>
@@ -59,6 +66,12 @@ const styles = StyleSheet.create({
   },
   listView: {
     padding: 5
+  },
+  row: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   }
 });
 

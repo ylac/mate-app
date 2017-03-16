@@ -1,3 +1,7 @@
 rootProject.name = 'MateApp'
 
 include ':app'
+include ':react-native-select-contact-android'
+project(':react-native-select-contact-android').projectDir = new File(settingsDir, '../node_modules/react-native-select-contact-android/android')
+include ':react-native-contacts-wrapper'
+project(':react-native-contacts-wrapper').projectDir = new File(settingsDir, '../node_modules/react-native-contacts-wrapper/android/app')
