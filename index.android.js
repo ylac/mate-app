@@ -1,53 +1,65 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
 import {
   AppRegistry,
+  ListView,
   StyleSheet,
   Text,
+  TextInput,
   View
 } from 'react-native';
+import { Body, CheckBox, Container, Content, Item, Input, Icon, ListItem } from 'native-base';
+
 
 export default class MateApp extends Component {
+  constructor(props) {
+    super(props);
+    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    var initData = ['Go jogging', 'Eat flaxseed oil'];
+    this.state = {
+      dataSource: ds.cloneWithRows(initData),
+      db: initData
+    };
+  }
+  addHabit() {
+    var text = this.refs.newHabit._lastNativeText;
+    this.refs.newHabit.setNativeProps({text: ''});
+    var newData = this.state.db.slice();
+    newData.push(text);
+    this.setState({
+      dataSource: this.state.dataSource.cloneWithRows(newData),
+      db: newData
+    });
+  }
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Double tap R on your keyboard to reload,{'\n'}
-          Shake or press menu button for dev menu
-        </Text>
+      <View style={styles.view}>
+        <TextInput
+          placeholder="Enter new habit here"
+          style={styles.textInput}
+          onSubmitEditing={this.addHabit.bind(this)}
+          ref="newHabit"
+        />
+        <ListView
+          dataSource={this.state.dataSource}
+          renderRow={(rowData) => <Text>{rowData}</Text> }
+          style={styles.listView}
+        />
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
+  view: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    padding: 10
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
+  textInput: {
+    height: 40
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+  listView: {
+    padding: 5
+  }
 });
 
 AppRegistry.registerComponent('MateApp', () => MateApp);
