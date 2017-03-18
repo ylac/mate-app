@@ -6,11 +6,20 @@ import ContactsWrapper from 'react-native-contacts-wrapper';
 export default class AddBuddyButton extends Component {
   addBuddy() {
     // this.requestContactsPermission();
-    console.log(ContactsWrapper);
     ContactsWrapper.getContact()
         .then((contact) => {
-            // Replace this code
-            console.log(contact);
+          console.log(contact);
+          for (id in this.state.db) {
+            if (!this.state.db.hasOwnProperty(id)) continue;
+            var habit = this.state.db[id];
+            for (var prop in habit) {
+              if (prop === 'text' && prop.text === this.props.habit) {
+                habit.buddyName = contact.name;
+                habit.buddyMobile = contact.phone;
+                console.log(habit);
+              }
+            }
+          }
         })
         .catch((error) => {
             console.log("ERROR CODE: ", error.code);
