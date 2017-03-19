@@ -7,12 +7,16 @@
     "test": "jest"
   },
   "dependencies": {
+    "moment": "^2.18.0",
     "native-base": "^2.0.12",
     "react": "~15.4.1",
     "react-native": "0.42.0",
+    "react-native-action-button": "^2.6.4",
+    "react-native-button": "^1.8.2",
     "react-native-check-box": "^1.0.4",
     "react-native-contacts-wrapper": "^0.2.3",
     "react-native-select-contact-android": "^0.7.1",
+    "react-native-vector-icons": "^4.0.0",
     "react-redux": "^5.0.3",
     "redux": "^3.6.0",
     "redux-logger": "^2.8.2",

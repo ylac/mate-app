@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { AppRegistry, Button, ListView, PermissionsAndroid, StyleSheet, Text, TextInput, View } from 'react-native';
+import { AppRegistry, Image, ListView, PermissionsAndroid, StyleSheet, Text, TextInput, View } from 'react-native';
 import * as Redux from 'react-redux';
 import * as actions from './android/app/src/actions/actions.js';
 var SelectContacts = require('react-native-select-contact-android');
 import ContactsWrapper from 'react-native-contacts-wrapper';
+import Button from 'react-native-button';
 
 export class BuddyArea extends Component {
   addBuddy() {
@@ -49,14 +50,22 @@ export class BuddyArea extends Component {
     var renderBuddyArea = () => {
       if (!selectedHabit[0].buddies) {
         return (
-          <Button title="+" style={{ flex: 0.5 }}
-                  onPress={this.addBuddy.bind(this)}
-          />
+          <View style={{ height: 20, width: 30 }}>
+            <Button
+              containerStyle={{padding:0, height:25, overflow:'hidden', borderRadius:4}}
+              style={{fontSize: 20, color: 'black'}}
+              onPress={this.addBuddy.bind(this)}>
+              +
+            </Button>
+          </View>
         );
       } else {
         var buddyId = selectedHabit[0].buddies.photo ? selectedHabit[0].buddies.photo : selectedHabit[0].buddies.name;
+        console.log('buddyId', buddyId);
         return (
-          <Text>{buddyId}: Nice work mate!</Text>
+          <Image
+            style={{width: 30, height: 30, paddingTop: 20 }}
+            source={require('./kevin.jpg')}/>
         );
       }
     };
