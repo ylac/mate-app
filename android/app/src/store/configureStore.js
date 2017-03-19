@@ -1,16 +1,21 @@
 import * as redux from 'redux';
 // import thunk from 'redux-thunk';
 import createLogger from 'redux-logger';
+const uuid = require('uuid/v4');
 const loggerMiddleware = createLogger({ predicate: (getState, action) => __DEV__ });
 
 import {habitReducer} from './../reducers/reducers.js';
 
 var initialStateData = {habits: [
   {
-    text: 'Eat flaxseed oil'
+    id: uuid(),
+    text: 'Eat flaxseed oil',
+    checked: false
   },
   {
-    text: 'Go jogging'
+    id: uuid(),
+    text: 'Go jogging',
+    checked: false
   }
 ]};
 

@@ -10,11 +10,13 @@
     "native-base": "^2.0.12",
     "react": "~15.4.1",
     "react-native": "0.42.0",
+    "react-native-check-box": "^1.0.4",
     "react-native-contacts-wrapper": "^0.2.3",
     "react-native-select-contact-android": "^0.7.1",
     "react-redux": "^5.0.3",
     "redux": "^3.6.0",
-    "redux-logger": "^2.8.2"
+    "redux-logger": "^2.8.2",
+    "uuid": "^3.0.1"
   },
   "devDependencies": {
     "babel-jest": "19.0.0",
