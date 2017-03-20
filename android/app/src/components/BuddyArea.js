@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { AppRegistry, Image, ListView, PermissionsAndroid, StyleSheet, Text, TextInput, View } from 'react-native';
 import * as Redux from 'react-redux';
-import * as actions from './android/app/src/actions/actions.js';
+import * as actions from './../actions/actions.js';
 var SelectContacts = require('react-native-select-contact-android');
 import ContactsWrapper from 'react-native-contacts-wrapper';
 import Button from 'react-native-button';
@@ -14,7 +14,7 @@ export class BuddyArea extends Component {
       .then((contact) => {
         console.log('contact', contact);
         dispatch(actions.addBuddy(contact, habitText));
-        this.setState({});
+        this.forceUpdate();
       })
       .catch((error) => {
           console.log("ERROR CODE: ", error.code);
@@ -42,11 +42,11 @@ export class BuddyArea extends Component {
   // }
   render() {
     var {habitText, habits} = this.props;
-    console.log('habits', habits);
+    // console.log('habits', habits);
     var selectedHabit = habits.filter((habit) => {
       return habit.text === habitText;
     });
-    console.log('selectedHabit', selectedHabit);
+    // console.log('selectedHabit', selectedHabit);
     var renderBuddyArea = () => {
       if (!selectedHabit[0].buddies) {
         return (
@@ -65,7 +65,7 @@ export class BuddyArea extends Component {
         return (
           <Image
             style={{width: 30, height: 30, paddingTop: 20 }}
-            source={require('./kevin.jpg')}/>
+            source={require('./../img/kevin.jpg')}/>
         );
       }
     };

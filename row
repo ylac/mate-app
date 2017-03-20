@@ -1,0 +1,17 @@
+<View style={styles.row}>
+  <View style={styles.rowLeft}>
+    <Text style={styles.habitText}>{habit.text}</Text>
+  </View>
+  <View style={styles.rowRight}>
+    <CheckBox
+      label=''
+      onChange={(checked) => {
+        store.dispatch(actions.toggleHabit(!checked, habit.id, 0));
+      }}
+      checked={false}
+    />
+    <View style={styles.buddyArea}>
+      <BuddyArea habitText={habit.text}/>
+    </View>
+  </View>
+</View>
