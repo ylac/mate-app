@@ -35,3 +35,10 @@ export function toggleHabit(checked, habitID, checkboxID) {
     checkboxID
   }
 }
+
+export function deleteHabit(id) {
+  return {
+    type: 'DELETE_HABIT',
+    id
+  }
+}

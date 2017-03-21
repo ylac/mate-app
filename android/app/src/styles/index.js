@@ -5,17 +5,15 @@ module.exports = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'space-around',
-    padding: 10
+    backgroundColor: 'white',
+    padding: 10,
   },
   textInput: {
     flex: 0.05
   },
   listView: {
-    flex: 4,
+    flex: 0.5,
     paddingTop: 0
-  },
-  contentContainer: {
-    paddingBottom: 0
   },
   row: {
     flex: 1,
@@ -29,6 +27,26 @@ module.exports = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     paddingRight: 20
+  },
+  sideButtons: {
+    backgroundColor: 'white',
+    borderColor: 'black',
+    borderRadius: 5,
+    borderWidth: 1,
+    borderStyle: 'solid',
+    color: 'black',
+    padding: 5
+  },
+  leftSwipeButton: {
+    flex: 1,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    paddingRight: 20
+  },
+  rightSwipeButton: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingLeft: 20
   },
   habitText: {
     fontWeight: 'bold'

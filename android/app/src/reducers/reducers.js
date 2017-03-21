@@ -21,7 +21,12 @@ export var habitReducer = (state = [], action) => {
           habit.dates[date] = action.checked;
         }
       });
-      // console.log('newState', newState);
+      console.log('newState', newState);
+      return newState;
+    case 'DELETE_HABIT':
+      var newState = state.filter((habit) => {
+        return action.id !== habit.id;
+      });
       return newState;
     case 'ADD_BUDDY':
       let newState = state;

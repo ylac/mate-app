@@ -2,9 +2,13 @@ import React, { Component } from 'react';
 import { ListView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 var { connect, Provider } = require('react-redux');
 import moment from 'moment';
+import { SwipeListView, SwipeRow } from 'react-native-swipe-list-view';
 import ActionButton from 'react-native-action-button';
 import Button from 'react-native-button';
 import CheckBox from 'react-native-android-checkbox';
+import Modal from 'react-native-modalbox';
+import Swipeable from 'react-native-swipeable';
+import SwipeList from 'react-native-smooth-swipe-list';
 
 import * as actions from './../actions/actions.js';
 import GridHeader from './GridHeader';
@@ -23,6 +27,8 @@ export class Container extends Component {
       value: false
     }
     this.rowRenderer = this.rowRenderer.bind(this);
+    this.hiddenRowRenderer = this.hiddenRowRenderer.bind(this);
+    this.deleteHabit = this.deleteHabit.bind(this);
   }
   addHabit() {
     var text = this.refs.newHabit._lastNativeText;
@@ -30,61 +36,83 @@ export class Container extends Component {
     // console.log('newState', store.getState());
     this.refs.newHabit.setNativeProps({text: ''});
   }
+  deleteHabit(rowData) {
+    var {dispatch} = this.props;
+    dispatch(actions.deleteHabit(rowData.id));
+  }
   rowRenderer(rowData) {
     var {dispatch, habits} = this.props;
     var date0 = moment().format("D-M-YYYY");
     var date1 = moment().subtract(1, 'days').format("D-M-YYYY");
     var date2 = moment().subtract(2, 'days').format("D-M-YYYY");
-    console.log('habits', habits);
+    // console.log('habits', habits);
     var filter = (id, date) => {
       return habits.filter((habit) => {
         return habit.id === id;
-      })
-    [0].dates[date]
+      })[0].dates[date]
     };
-    // console.log('filter', filter(1));
     return (
-      <View style={styles.view}>
-        <View style={styles.row}>
-          <View style={styles.rowLeft}>
-            <Text style={styles.habitText}>{rowData.text}</Text>
-          </View>
-          <View style={styles.rowRight}>
-            <CheckBox
-              value={filter(rowData.id, date0)}
-              disabled={false}
-              onValueChange={(value) => {
-                dispatch(actions.toggleHabit(value, rowData.id, 0));
-                this.setState({value});
-              }}
-            />
-            <CheckBox
-              value={filter(rowData.id, date1)}
-              disabled={false}
-              onValueChange={(value) => {
-                dispatch(actions.toggleHabit(value, rowData.id, 1));
-                this.setState({value});
-              }}
-            />
-            <CheckBox
-              value={filter(rowData.id, date2)}
-              disabled={false}
-              onValueChange={(value) => {
-                dispatch(actions.toggleHabit(value, rowData.id, 2));
-                this.setState({value});
-              }}
-            />
-            <View style={styles.buddyArea}>
-              <BuddyArea habitText={rowData.text}/>
+      <SwipeRow
+        disableRightSwipe={false}
+  			disableLeftSwipe={false}
+  			leftOpenValue={80}
+  			rightOpenValue={-80}
+      >
+        <View style={{
+          alignItems: 'center',
+          flex: 1,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          padding: 10
+        }}>
+          <Button style={styles.sideButtons} onPress={() => this.deleteHabit(rowData)}>Delete</Button>
+          <Button style={styles.sideButtons}>Edit</Button>
+        </View>
+        <View style={styles.view}>
+          <View style={styles.row}>
+            <View style={styles.rowLeft}>
+              <Text
+                style={styles.habitText}
+              >
+              {rowData.text}
+              </Text>
+            </View>
+            <View style={styles.rowRight}>
+              <CheckBox
+                value={filter(rowData.id, date0)}
+                disabled={false}
+                onValueChange={(value) => {
+                  dispatch(actions.toggleHabit(value, rowData.id, 0));
+                  this.setState({value});
+                }}
+              />
+              <CheckBox
+                value={filter(rowData.id, date1)}
+                disabled={false}
+                onValueChange={(value) => {
+                  dispatch(actions.toggleHabit(value, rowData.id, 1));
+                  this.setState({value});
+                }}
+              />
+              <CheckBox
+                value={filter(rowData.id, date2)}
+                disabled={false}
+                onValueChange={(value) => {
+                  dispatch(actions.toggleHabit(value, rowData.id, 2));
+                  this.setState({value});
+                }}
+              />
+              <View style={styles.buddyArea}>
+                <BuddyArea habitText={rowData.text}/>
+              </View>
             </View>
           </View>
         </View>
-      </View>
+      </SwipeRow>
     )
   }
   render() {
     var {habits} = this.props;
-    // console.log('habits', habits);
     return (
       <View style={styles.view}>
         <TextInput
@@ -97,11 +125,10 @@ export class Container extends Component {
          <GridHeader/>
         </View>
         <ScrollView>
-          <ListView
+          <SwipeListView
             dataSource={ds.cloneWithRows(habits)}
             renderRow={this.rowRenderer}
             style={styles.listView}
-            contentContainerStyle={styles.contentContainer}
           />
         </ScrollView>
         <ActionButton style={styles.actionButton}>
