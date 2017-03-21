@@ -14,7 +14,7 @@ import Container from './android/app/src/components/Container.js';
 
 var store = require('./android/app/src/store/configureStore').configure();
 
-export class MateApp extends Component {
+export default class MateApp extends Component {
   constructor(props) {
     super(props);
     // this.setState{{ rehydrated: false }}

@@ -16,6 +16,21 @@ var initialStateData = {habits: [
     id: uuid(),
     text: 'Eat flaxseed oil',
     dates: {}
+  },
+  {
+    id: uuid(),
+    text: 'Eat flaxseed oil',
+    dates: {}
+  },
+  {
+    id: uuid(),
+    text: 'Eat flaxseed oil',
+    dates: {}
+  },
+  {
+    id: uuid(),
+    text: 'Eat flaxseed oil',
+    dates: {}
   }
 ]};
 initialStateData.habits[0].dates[date] = false;
@@ -26,12 +41,13 @@ export var configure = () => {
   var reducer = combineReducers({
     habits: habitReducer
   });
-  var store = createStore(reducer, {}, compose(
-    // applyMiddleware(loggerMiddleware),
-    // autoRehydrate()
-  ));
+  // var store = createStore(reducer, initialStateData, compose(
+  //   // applyMiddleware(loggerMiddleware),
+  //   autoRehydrate()
+  // ));
+  const store = compose(autoRehydrate())(createStore)(reducer);
   // persistStore(store, {storage: AsyncStorage}).purge();
-  // persistStore(store, {storage: AsyncStorage}, () => {
-  // });
+  persistStore(store, {storage: AsyncStorage}, () => {
+  });
   return store;
 };

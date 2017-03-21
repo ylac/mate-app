@@ -3,14 +3,15 @@ import { StyleSheet } from 'react-native';
 module.exports = StyleSheet.create({
   view: {
     flex: 1,
-    justifyContent: 'flex-start',
+    flexDirection: 'column',
+    justifyContent: 'space-around',
     padding: 10
   },
   textInput: {
-    height: 40
+    flex: 0.05
   },
   listView: {
-    flex: 1,
+    flex: 4,
     paddingTop: 0
   },
   contentContainer: {
@@ -53,9 +54,7 @@ module.exports = StyleSheet.create({
     color: 'white',
   },
   gridHeader: {
-    flex: 0.6,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    paddingLeft: 130
+    flex: 0.05,
+    paddingLeft: 135
   },
 });
