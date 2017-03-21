@@ -24,11 +24,13 @@ export class Container extends Component {
   constructor() {
     super();
     this.state = {
-      value: false
+      value: false,
+      editable: false,
+      textInputCounter: 0
     }
     this.rowRenderer = this.rowRenderer.bind(this);
-    this.hiddenRowRenderer = this.hiddenRowRenderer.bind(this);
     this.deleteHabit = this.deleteHabit.bind(this);
+    this.editHabit = this.editHabit.bind(this);
   }
   addHabit() {
     var text = this.refs.newHabit._lastNativeText;
@@ -36,11 +38,23 @@ export class Container extends Component {
     // console.log('newState', store.getState());
     this.refs.newHabit.setNativeProps({text: ''});
   }
-  deleteHabit(rowData) {
+  deleteHabit(rowData, secId, rowId, rowMap) {
+    rowMap[`${secId}${rowId}`].closeRow();
     var {dispatch} = this.props;
     dispatch(actions.deleteHabit(rowData.id));
   }
-  rowRenderer(rowData) {
+  editHabit(rowData, secId, rowId, rowMap) {
+    rowMap[`${secId}${rowId}`].closeRow();
+    this.setState({editable: true});
+    var ref = rowData.id;
+    console.log('refs', this.refs);
+    this.myTextInput.focus();
+  }
+  updateHabit(id, text) {
+    this.props.dispatch(actions.updateHabit(id, text))
+    this.setState({editable: false});
+  }
+  rowRenderer(rowData, secId, rowId, rowMap) {
     var {dispatch, habits} = this.props;
     var date0 = moment().format("D-M-YYYY");
     var date1 = moment().subtract(1, 'days').format("D-M-YYYY");
@@ -65,17 +79,20 @@ export class Container extends Component {
           justifyContent: 'space-between',
           padding: 10
         }}>
-          <Button style={styles.sideButtons} onPress={() => this.deleteHabit(rowData)}>Delete</Button>
-          <Button style={styles.sideButtons}>Edit</Button>
+          <Button style={styles.sideButtons} onPress={() => this.deleteHabit(rowData, secId, rowId, rowMap)}>Delete</Button>
+          <Button style={styles.sideButtons} onPress={() => this.editHabit(rowData, secId, rowId, rowMap)}>Edit</Button>
         </View>
         <View style={styles.view}>
           <View style={styles.row}>
             <View style={styles.rowLeft}>
-              <Text
+              <TextInput
                 style={styles.habitText}
+                editable={this.state.editable}
+                onSubmitEditing={(e) => this.updateHabit(rowData.id, e.nativeEvent.text)}
+                ref={(ref => this.myTextInput = ref)}
               >
               {rowData.text}
-              </Text>
+            </TextInput>
             </View>
             <View style={styles.rowRight}>
               <CheckBox

@@ -23,6 +23,15 @@ export var habitReducer = (state = [], action) => {
       });
       console.log('newState', newState);
       return newState;
+    case 'UPDATE_HABIT':
+      var newState = state;
+      newState.forEach((habit) => {
+        if (habit.id === action.id) {
+          habit.text = action.text;
+        }
+      });
+      console.log('newState', newState);
+      return newState;
     case 'DELETE_HABIT':
       var newState = state.filter((habit) => {
         return action.id !== habit.id;
