@@ -16,22 +16,17 @@ var initialStateData = {habits: [
     id: uuid(),
     text: 'Eat flaxseed oil',
     dates: {}
-  },
-  {
-    id: uuid(),
-    text: 'Go jogging',
-    dates: {}
   }
 ]};
 initialStateData.habits[0].dates[date] = false;
-initialStateData.habits[1].dates[date] = false;
+// initialStateData.habits[1].dates[date] = false;
 
 
 export var configure = () => {
   var reducer = combineReducers({
     habits: habitReducer
   });
-  var store = createStore(reducer, initialStateData, compose(
+  var store = createStore(reducer, {}, compose(
     // applyMiddleware(loggerMiddleware),
     // autoRehydrate()
   ));

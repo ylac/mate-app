@@ -10,6 +10,7 @@ var store = require('./../store/configureStore').configure();
 
 export var rowRenderer = (rowData) => {
   // console.log('rowData', rowData);
+  console.log('this', this.props);
   var checkedFirst = rowData.dates[moment().format("D-M-YYYY")];
   // checkedFirst = true;
   // console.log('checkedFirst', checkedFirst);
@@ -21,11 +22,11 @@ export var rowRenderer = (rowData) => {
         </View>
         <View style={styles.rowRight}>
           <CheckBox
-            label=''
-            onChange={(checked) => {
-              store.dispatch(actions.toggleHabit(!checked, rowData.id, 0));
+            value={this.state.value}
+            disabled={false}
+            onValueChange={(value) => {
+              this.setState({ value })
             }}
-            checked={false}
           />
           <View style={styles.buddyArea}>
             <BuddyArea habitText={rowData.text}/>

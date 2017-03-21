@@ -3,13 +3,12 @@ import { AppRegistry, AsyncStorage, Button, ListView, ScrollView, StyleSheet, Te
 import { applyMiddleware, createStore, combineReducers, compose } from 'redux';
 var { connect, Provider } = require('react-redux');
 import {getStoredState, autoRehydrate, createPersistor, persistStore} from 'redux-persist';
-import CheckBox from 'react-native-custom-checkbox';
+// import CheckBox from 'react-native-custom-checkbox';
+import CheckBox from 'react-native-android-checkbox';
+
 import ActionButton from 'react-native-action-button';
 
-import * as actions from './android/app/src/actions/actions.js';
 import Container from './android/app/src/components/Container.js';
-import HabitsList from './android/app/src/components/HabitsList.js';
-import {rowRenderer} from './android/app/src/components/rowRenderer.js';
 // import GridHeader from './GridHeader';
 // import BuddyArea from './android/app/src/components/BuddyArea';
 
@@ -20,13 +19,6 @@ export class MateApp extends Component {
     super(props);
     // this.setState{{ rehydrated: false }}
   }
-  componentWillUpdate() {
-    // persistStore(store, {storage: AsyncStorage}, () => {
-    //   this.setState({ rehydrated: true })
-    // })
-    console.log('newState', store.getState());
-  }
-
   render() {
     return (
       <Provider store={store}>
@@ -35,6 +27,5 @@ export class MateApp extends Component {
     );
   }
 }
-
 
 AppRegistry.registerComponent('MateApp', () => MateApp);

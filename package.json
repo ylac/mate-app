@@ -12,6 +12,7 @@
     "react": "~15.4.1",
     "react-native": "0.42.0",
     "react-native-action-button": "^2.6.4",
+    "react-native-android-checkbox": "^3.0.0",
     "react-native-button": "^1.8.2",
     "react-native-check-box": "^1.0.4",
     "react-native-checkbox": "^1.1.0",
