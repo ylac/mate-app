@@ -38,7 +38,7 @@ export var habitReducer = (state = [], action) => {
       });
       return newState;
     case 'ADD_BUDDY':
-      let newState = state;
+      var newState = state;
       newState.forEach((habit) => {
         if (habit.id === action.habitID) {
           habit.buddies = {
@@ -48,7 +48,16 @@ export var habitReducer = (state = [], action) => {
           };
         }
       });
-      console.log('newState', newState);      
+      console.log('newState', newState);
+      return newState;
+    case 'DELETE_BUDDY':
+      var newState = state;
+      newState.forEach((habit) => {
+        if (action.habitID === habit.id) {
+          delete habit.buddies;
+        };
+      });
+      console.log('newState', newState);
       return newState;
     default:
       return state;

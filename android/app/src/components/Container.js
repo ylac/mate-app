@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Dimensions, Image, ListView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Dimensions, Image, ListView, Picker, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 var { connect, Provider } = require('react-redux');
 import moment from 'moment';
 import { SwipeListView, SwipeRow } from 'react-native-swipe-list-view';
 import ActionButton from 'react-native-action-button';
+import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
 // import Button from 'react-native-button';
 import { Button, Icon } from 'react-native-elements';
 import CheckBox from 'react-native-android-checkbox';
@@ -12,7 +13,9 @@ import Slider from 'react-native-slider';
 import Swipeable from 'react-native-swipeable';
 import SwipeList from 'react-native-smooth-swipe-list';
 import ContactsWrapper from 'react-native-contacts-wrapper';
-
+import Communications from 'react-native-communications';
+var SendIntentAndroid = require('react-native-send-intent');
+var SmsAndroid = require('react-native-sms-android');
 
 import * as actions from './../actions/actions.js';
 import BuddyArea from './../components/BuddyArea';
@@ -30,20 +33,22 @@ export class Container extends Component {
       value: false,
       editable: false,
       textInputCounter: 0,
-      selectedHabit: {}
+      selectedHabit: {},
+      messageText: `Yo, I'mma hit the gym 3/3 times this week. Howzat?`
     }
     this.chooseBuddy = this.chooseBuddy.bind(this);
     this.renderBuddyArea = this.renderBuddyArea.bind(this);
     this.rowRenderer = this.rowRenderer.bind(this);
     this.deleteHabit = this.deleteHabit.bind(this);
     this.editHabit = this.editHabit.bind(this);
+    this.toggleHabit = this.toggleHabit.bind(this);
   }
   openAddBuddyModal(selectedHabit) {
     this.setState({
       selectedHabit
     });
     console.log('selectedHabitText', selectedHabit.text);
-    this.refs.modal4.open();
+    this.refs.modal.open();
   }
   chooseBuddy(habitID) {
     var {dispatch} = this.props;
@@ -58,6 +63,11 @@ export class Container extends Component {
           console.log("ERROR MESSAGE: ", error.message);
       });
   }
+  deleteBuddy(habitID) {
+    this.props.dispatch(actions.deleteBuddy(habitID));
+    this.refs.modal.close()
+    this.forceUpdate();
+  }
   addHabit() {
     var text = this.refs.newHabit._lastNativeText;
     this.props.dispatch(actions.addHabit(text));
@@ -69,12 +79,13 @@ export class Container extends Component {
     var {dispatch} = this.props;
     dispatch(actions.deleteHabit(rowData.id));
   }
-  editHabit(rowData, secId, rowId, rowMap) {
+  editHabit(rowData, secId, rowId, rowMap, selectedHabit) {
     rowMap[`${secId}${rowId}`].closeRow();
-    this.setState({editable: true});
-    var ref = rowData.id;
-    console.log('refs', this.refs);
-    this.myTextInput.focus();
+    this.openAddBuddyModal(selectedHabit)
+  }
+  toggleHabit(checked, rowData, checkboxID) {
+    this.props.dispatch(actions.toggleHabit(checked, rowData.id, checkboxID));
+    this.setState({checked});
   }
   updateHabit(id, text) {
     this.props.dispatch(actions.updateHabit(id, text))
@@ -84,18 +95,9 @@ export class Container extends Component {
     var {habits} = this.props;
     var selectedHabit = habits.filter((habit) => {
       return habit.id === id;
-    });
-    if (!selectedHabit[0].buddies) {
-      return (
-        <View style={{ height: 20, width: 30 }}>
-          <Icon
-            name='person-add'
-            onPress={() => this.openAddBuddyModal(selectedHabit[0])}>
-          </Icon>
-        </View>
-      );
-    } else {
-      var buddyId = selectedHabit[0].buddies.photo ? selectedHabit[0].buddies.photo : selectedHabit[0].buddies.name;
+    })[0];
+    if (selectedHabit.buddies) {
+      var buddyId = selectedHabit.buddies.photo ? selectedHabit.buddies.photo : selectedHabit.buddies.name;
       console.log('buddyId', buddyId);
       return (
         <Image
@@ -118,12 +120,33 @@ export class Container extends Component {
     var date0 = moment().format("D-M-YYYY");
     var date1 = moment().subtract(1, 'days').format("D-M-YYYY");
     var date2 = moment().subtract(2, 'days').format("D-M-YYYY");
-    // console.log('habits', habits);
-    var filter = (id, date) => {
-      return habits.filter((habit) => {
-        return habit.id === id;
-      })[0].dates[date]
-    };
+    console.log('habits', habits);
+    if (habits.length > 0) {
+      var selectedHabit = habits.filter((habit) => {
+        return habit.id === rowData.id;
+      })[0];
+      console.log('selectedHabit', selectedHabit);
+      var checkedValue = (date) => {
+        return selectedHabit.dates[date]
+      };
+      var renderRightButton = (selectedHabit) => {
+        if (!selectedHabit.hasOwnProperty("buddies")) {
+          return <Icon name='person-add' onPress={() => {
+              rowMap[`${secId}${rowId}`].closeRow();
+              this.openAddBuddyModal(selectedHabit);
+              this.chooseBuddy(selectedHabit.id);
+            }}></Icon>
+        } else {
+          return <Icon name='mode-edit' style={styles.sideButtons}
+            onPress={() => {
+              rowMap[`${secId}${rowId}`].closeRow();
+              this.editHabit(rowData, secId, rowId, rowMap, selectedHabit)
+            }}
+            >Edit
+          </Icon>
+        }
+      }
+    }
     return (
       <SwipeRow
         disableRightSwipe={false}
@@ -133,7 +156,7 @@ export class Container extends Component {
       >
         <View style={styles.hiddenRow}>
           <Icon name='delete' style={styles.sideButtons} onPress={() => this.deleteHabit(rowData, secId, rowId, rowMap)}>Delete</Icon>
-          <Icon name='mode-edit' style={styles.sideButtons} onPress={() => this.editHabit(rowData, secId, rowId, rowMap)}>Edit</Icon>
+          {renderRightButton(selectedHabit)}
         </View>
         <View style={styles.view}>
           <View style={styles.row}>
@@ -152,27 +175,24 @@ export class Container extends Component {
             </View>
             <View style={styles.rowRight}>
               <CheckBox
-                value={filter(rowData.id, date0)}
+                value={checkedValue(date0)}
                 disabled={false}
                 onValueChange={(value) => {
-                  dispatch(actions.toggleHabit(value, rowData.id, 0));
-                  this.setState({value});
+                  this.toggleHabit(value, rowData, 0);
                 }}
               />
               <CheckBox
-                value={filter(rowData.id, date1)}
+                value={checkedValue(date1)}
                 disabled={false}
                 onValueChange={(value) => {
-                  dispatch(actions.toggleHabit(value, rowData.id, 1));
-                  this.setState({value});
+                  this.toggleHabit(value, rowData, 1);
                 }}
               />
               <CheckBox
-                value={filter(rowData.id, date2)}
+                value={checkedValue(date2)}
                 disabled={false}
                 onValueChange={(value) => {
-                  dispatch(actions.toggleHabit(value, rowData.id, 2));
-                  this.setState({value});
+                  this.toggleHabit(value, rowData, 2);
                 }}
               />
               <View style={styles.buddyArea}>
@@ -208,17 +228,39 @@ export class Container extends Component {
           onPress={() => console.log('You pressed me!')}
           underlayColor='red'
         />
-        <Modal style={styles.modal} position={"center"} ref={"modal4"}>
+        <Modal style={styles.modal} position={"center"} ref={"modal"}>
           <ScrollView contentContainerStyle={styles.modalView}>
-            <Text>Add buddy for "{this.state.selectedHabit.text}"</Text>
-            <Icon
-              name='person-add'
-              onPress={() => this.chooseBuddy(this.state.selectedHabit.id)}>
-            </Icon>
+            <Text>Manage buddy for "{this.state.selectedHabit.text}"</Text>
+            <View>
+              <Icon name='person-add' onPress={() => this.chooseBuddy(this.state.selectedHabit.id)}></Icon>
+              <Icon name='delete' onPress={() => this.deleteBuddy(this.state.selectedHabit.id)}></Icon>
+            </View>
+            <Text>Progress message</Text>
             <TextInput
-              defaultValue={`Hey [name], I went jogging x/x times this week. Howzat?`}
-            >
-            </TextInput>
+              value={this.state.messageText}
+              mutliline={true}
+              numberOfLines={4}
+              maxLength={200}
+            />
+            <Text>Message Timing</Text>
+            <Picker
+              selectedValue={this.state.messageTiming}
+              onValueChange={(timing) => this.setState({messageTiming: timing})}
+              prompt='Message Timing'>
+              <Picker.Item label="After completing every habit" value="afterEachHabit" />
+              <Picker.Item label="Weekly" value="weekly" />
+            </Picker>
+            <Button onPress={() => {
+                SmsAndroid.sms('0403182826', this.state.messageText, 'sendDirect', // sendDirect or sendIndirect
+                  (err, message) => {
+                    if (err){
+                      console.log("error");
+                    } else {
+                      console.log('SMS', message); // callback message
+                    }
+                  }
+                );
+            }}>Send SMS</Button>
           </ScrollView>
         </Modal>
       </View>

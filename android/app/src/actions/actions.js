@@ -1,16 +1,6 @@
 const uuid = require('uuid/v4');
 import moment from 'moment';
 
-export function addBuddy(contact, habitID) {
-  return {
-    type: 'ADD_BUDDY',
-    habitID,
-    name: contact.name,
-    phone: contact.phone,
-    photo: contact.photo
-  }
-}
-
 export function addHabit(text) {
   var date1 = moment().format("D-M-YYYY");
   var date3 = moment().subtract(1, 'days').format("D-M-YYYY");
@@ -48,5 +38,22 @@ export function deleteHabit(id) {
   return {
     type: 'DELETE_HABIT',
     id
+  }
+}
+
+export function addBuddy(contact, habitID) {
+  return {
+    type: 'ADD_BUDDY',
+    habitID,
+    name: contact.name,
+    phone: contact.phone,
+    photo: contact.photo
+  }
+}
+
+export function deleteBuddy(habitID) {
+  return {
+    type: 'DELETE_BUDDY',
+    habitID
   }
 }

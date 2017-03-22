@@ -6,7 +6,7 @@ module.exports = StyleSheet.create({
     flexDirection: 'column',
     // justifyContent: 'space-around',
     backgroundColor: 'white',
-    padding: 5,
+    padding: 10,
   },
   textInput: {
     flex: 0.05
@@ -82,5 +82,6 @@ module.exports = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     // alignItems: 'center',
+    padding: 20
   }
 });

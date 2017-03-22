@@ -127,6 +127,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-send-intent')
     compile project(':react-native-android-checkbox')
     compile project(':react-native-vector-icons')
     compile fileTree(dir: "libs", include: ["*.jar"])
@@ -134,6 +135,7 @@ dependencies {
     compile "com.facebook.react:react-native:+"  // From node_modules
     compile project(':react-native-select-contact-android')
     compile project(':react-native-contacts-wrapper')
+    compile project(':react-native-sms-android')
 }
 
 // Run this once to be able to run the application with BUCK

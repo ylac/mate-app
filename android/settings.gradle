@@ -1,4 +1,6 @@
 rootProject.name = 'MateApp'
+include ':react-native-send-intent'
+project(':react-native-send-intent').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-send-intent/android')
 include ':react-native-android-checkbox'
 project(':react-native-android-checkbox').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-android-checkbox/android')
 
@@ -9,3 +11,6 @@ include ':react-native-select-contact-android'
 project(':react-native-select-contact-android').projectDir = new File(settingsDir, '../node_modules/react-native-select-contact-android/android')
 include ':react-native-contacts-wrapper'
 project(':react-native-contacts-wrapper').projectDir = new File(settingsDir, '../node_modules/react-native-contacts-wrapper/android/app')
+
+include ':react-native-sms-android'
+project(':react-native-sms-android').projectDir = new File(settingsDir, '../node_modules/react-native-sms-android/android')
