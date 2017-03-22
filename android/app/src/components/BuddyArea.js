@@ -10,17 +10,18 @@ import { Icon } from 'react-native-elements';
 export class BuddyArea extends Component {
   addBuddy() {
     // this.requestContactsPermission();
+    this.refs.modal4.open();
     var {dispatch, habitText} = this.props;
-    ContactsWrapper.getContact()
-      .then((contact) => {
-        console.log('contact', contact);
-        dispatch(actions.addBuddy(contact, habitText));
-        this.forceUpdate();
-      })
-      .catch((error) => {
-          console.log("ERROR CODE: ", error.code);
-          console.log("ERROR MESSAGE: ", error.message);
-      });
+    // ContactsWrapper.getContact()
+    //   .then((contact) => {
+    //     console.log('contact', contact);
+    //     dispatch(actions.addBuddy(contact, habitText));
+    //     this.forceUpdate();
+    //   })
+    //   .catch((error) => {
+    //       console.log("ERROR CODE: ", error.code);
+    //       console.log("ERROR MESSAGE: ", error.message);
+    //   });
   }
   // async requestContactsPermission() {
   //   try {

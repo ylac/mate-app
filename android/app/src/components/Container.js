@@ -1,22 +1,25 @@
 import React, { Component } from 'react';
-import { ListView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Dimensions, Image, ListView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 var { connect, Provider } = require('react-redux');
 import moment from 'moment';
 import { SwipeListView, SwipeRow } from 'react-native-swipe-list-view';
 import ActionButton from 'react-native-action-button';
-import Button from 'react-native-button';
-import { Icon } from 'react-native-elements';
+// import Button from 'react-native-button';
+import { Button, Icon } from 'react-native-elements';
 import CheckBox from 'react-native-android-checkbox';
 import Modal from 'react-native-modalbox';
+import Slider from 'react-native-slider';
 import Swipeable from 'react-native-swipeable';
 import SwipeList from 'react-native-smooth-swipe-list';
+import ContactsWrapper from 'react-native-contacts-wrapper';
+
 
 import * as actions from './../actions/actions.js';
-import GridHeader from './GridHeader';
 import BuddyArea from './../components/BuddyArea';
 import styleSheet from './../styles/index.js';
 const styles = styleSheet;
 
+var screen = Dimensions.get('window');
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2, sectionHeaderHasChanged: (s1, s2) => s1 !== s2});
 var store = require('./../store/configureStore').configure();
 
@@ -26,11 +29,34 @@ export class Container extends Component {
     this.state = {
       value: false,
       editable: false,
-      textInputCounter: 0
+      textInputCounter: 0,
+      selectedHabit: {}
     }
+    this.chooseBuddy = this.chooseBuddy.bind(this);
+    this.renderBuddyArea = this.renderBuddyArea.bind(this);
     this.rowRenderer = this.rowRenderer.bind(this);
     this.deleteHabit = this.deleteHabit.bind(this);
     this.editHabit = this.editHabit.bind(this);
+  }
+  openAddBuddyModal(selectedHabit) {
+    this.setState({
+      selectedHabit
+    });
+    console.log('selectedHabitText', selectedHabit.text);
+    this.refs.modal4.open();
+  }
+  chooseBuddy(habitID) {
+    var {dispatch} = this.props;
+    ContactsWrapper.getContact()
+      .then((contact) => {
+        console.log('contact', contact);
+        dispatch(actions.addBuddy(contact, habitID));
+        this.forceUpdate();
+      })
+      .catch((error) => {
+          console.log("ERROR CODE: ", error.code);
+          console.log("ERROR MESSAGE: ", error.message);
+      });
   }
   addHabit() {
     var text = this.refs.newHabit._lastNativeText;
@@ -53,6 +79,30 @@ export class Container extends Component {
   updateHabit(id, text) {
     this.props.dispatch(actions.updateHabit(id, text))
     this.setState({editable: false});
+  }
+  renderBuddyArea(id) {
+    var {habits} = this.props;
+    var selectedHabit = habits.filter((habit) => {
+      return habit.id === id;
+    });
+    if (!selectedHabit[0].buddies) {
+      return (
+        <View style={{ height: 20, width: 30 }}>
+          <Icon
+            name='person-add'
+            onPress={() => this.openAddBuddyModal(selectedHabit[0])}>
+          </Icon>
+        </View>
+      );
+    } else {
+      var buddyId = selectedHabit[0].buddies.photo ? selectedHabit[0].buddies.photo : selectedHabit[0].buddies.name;
+      console.log('buddyId', buddyId);
+      return (
+        <Image
+          style={{width: 30, height: 30, paddingTop: 20 }}
+          source={require('./../img/kevin.jpg')}/>
+      );
+    }
   }
   rowHeader() {
     return (
@@ -126,7 +176,7 @@ export class Container extends Component {
                 }}
               />
               <View style={styles.buddyArea}>
-                <BuddyArea habitText={rowData.text}/>
+                {this.renderBuddyArea(rowData.id)}
               </View>
             </View>
           </View>
@@ -137,16 +187,13 @@ export class Container extends Component {
   render() {
     var {habits} = this.props;
     return (
-      <View style={styles.view}>
+      <View style={styles.container}>
         <TextInput
           placeholder="Enter new habit here"
           style={styles.textInput}
           onSubmitEditing={this.addHabit.bind(this)}
           ref="newHabit"
         />
-        <View style={styles.gridHeader}>
-
-        </View>
         <ScrollView>
           <SwipeListView
             dataSource={ds.cloneWithRows(habits)}
@@ -155,11 +202,25 @@ export class Container extends Component {
             style={styles.listView}
           />
         </ScrollView>
-        <ActionButton style={styles.actionButton}>
-          <ActionButton.Item buttonColor='#9b59b6' title="New Task" onPress={() => console.log("notes tapped!")}>
-            <Icon name="md-create" style={styles.actionButtonIcon} />
-          </ActionButton.Item>
-        </ActionButton>
+        <Icon
+          raised
+          name='add-circle-outline'
+          onPress={() => console.log('You pressed me!')}
+          underlayColor='red'
+        />
+        <Modal style={styles.modal} position={"center"} ref={"modal4"}>
+          <ScrollView contentContainerStyle={styles.modalView}>
+            <Text>Add buddy for "{this.state.selectedHabit.text}"</Text>
+            <Icon
+              name='person-add'
+              onPress={() => this.chooseBuddy(this.state.selectedHabit.id)}>
+            </Icon>
+            <TextInput
+              defaultValue={`Hey [name], I went jogging x/x times this week. Howzat?`}
+            >
+            </TextInput>
+          </ScrollView>
+        </Modal>
       </View>
     )
   }

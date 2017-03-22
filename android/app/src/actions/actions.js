@@ -1,10 +1,10 @@
 const uuid = require('uuid/v4');
 import moment from 'moment';
 
-export function addBuddy(contact, habit) {
+export function addBuddy(contact, habitID) {
   return {
     type: 'ADD_BUDDY',
-    habit,
+    habitID,
     name: contact.name,
     phone: contact.phone,
     photo: contact.photo
