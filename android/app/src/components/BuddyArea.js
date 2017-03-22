@@ -5,6 +5,7 @@ import * as actions from './../actions/actions.js';
 var SelectContacts = require('react-native-select-contact-android');
 import ContactsWrapper from 'react-native-contacts-wrapper';
 import Button from 'react-native-button';
+import { Icon } from 'react-native-elements';
 
 export class BuddyArea extends Component {
   addBuddy() {
@@ -51,12 +52,10 @@ export class BuddyArea extends Component {
       if (!selectedHabit[0].buddies) {
         return (
           <View style={{ height: 20, width: 30 }}>
-            <Button
-              containerStyle={{padding:0, height:25, overflow:'hidden', borderRadius:4}}
-              style={{fontSize: 20, color: 'black'}}
+            <Icon
+              name='person-add'
               onPress={this.addBuddy.bind(this)}>
-              +
-            </Button>
+            </Icon>
           </View>
         );
       } else {

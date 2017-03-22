@@ -5,6 +5,7 @@ import moment from 'moment';
 import { SwipeListView, SwipeRow } from 'react-native-swipe-list-view';
 import ActionButton from 'react-native-action-button';
 import Button from 'react-native-button';
+import { Icon } from 'react-native-elements';
 import CheckBox from 'react-native-android-checkbox';
 import Modal from 'react-native-modalbox';
 import Swipeable from 'react-native-swipeable';
@@ -15,7 +16,6 @@ import GridHeader from './GridHeader';
 import BuddyArea from './../components/BuddyArea';
 import styleSheet from './../styles/index.js';
 const styles = styleSheet;
-import Icon from 'react-native-vector-icons/Ionicons';
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2, sectionHeaderHasChanged: (s1, s2) => s1 !== s2});
 var store = require('./../store/configureStore').configure();
@@ -54,6 +54,15 @@ export class Container extends Component {
     this.props.dispatch(actions.updateHabit(id, text))
     this.setState({editable: false});
   }
+  rowHeader() {
+    return (
+      <View style={styles.rowHeader}>
+        <Text>{moment().format("dd")}</Text>
+        <Text>{moment().subtract(1, 'days').format("dd")}</Text>
+        <Text>{moment().subtract(2, 'days').format("dd")}</Text>
+      </View>
+    )
+  }
   rowRenderer(rowData, secId, rowId, rowMap) {
     var {dispatch, habits} = this.props;
     var date0 = moment().format("D-M-YYYY");
@@ -72,24 +81,21 @@ export class Container extends Component {
   			leftOpenValue={80}
   			rightOpenValue={-80}
       >
-        <View style={{
-          alignItems: 'center',
-          flex: 1,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          padding: 10
-        }}>
-          <Button style={styles.sideButtons} onPress={() => this.deleteHabit(rowData, secId, rowId, rowMap)}>Delete</Button>
-          <Button style={styles.sideButtons} onPress={() => this.editHabit(rowData, secId, rowId, rowMap)}>Edit</Button>
+        <View style={styles.hiddenRow}>
+          <Icon name='delete' style={styles.sideButtons} onPress={() => this.deleteHabit(rowData, secId, rowId, rowMap)}>Delete</Icon>
+          <Icon name='mode-edit' style={styles.sideButtons} onPress={() => this.editHabit(rowData, secId, rowId, rowMap)}>Edit</Icon>
         </View>
         <View style={styles.view}>
           <View style={styles.row}>
             <View style={styles.rowLeft}>
               <TextInput
-                style={styles.habitText}
-                editable={this.state.editable}
-                onSubmitEditing={(e) => this.updateHabit(rowData.id, e.nativeEvent.text)}
+                editable={true}
+                multiline={true}
+                numberOfLines={3}
+                onChangeText={(text) => this.updateHabit(rowData.id, text)}
                 ref={(ref => this.myTextInput = ref)}
+                style={styles.habitText}
+                underlineColorAndroid='transparent'
               >
               {rowData.text}
             </TextInput>
@@ -139,11 +145,12 @@ export class Container extends Component {
           ref="newHabit"
         />
         <View style={styles.gridHeader}>
-         <GridHeader/>
+
         </View>
         <ScrollView>
           <SwipeListView
             dataSource={ds.cloneWithRows(habits)}
+            renderHeader={this.rowHeader}
             renderRow={this.rowRenderer}
             style={styles.listView}
           />
